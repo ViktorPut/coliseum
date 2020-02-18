@@ -1,0 +1,44 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateHousesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('houses', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('floors')->nullable()->comment('Количество этажей');
+            $table->string('rooms')->nullable()->comment('Количество комнат');
+            $table->decimal('space',10, 2)->comment('Площадь');
+            $table->decimal('cost',30, 2)->comment('Стоимость');
+            $table->longText('description')->nullable()->comment('Описание');
+            $table->unsignedBigInteger('address_id');
+            $table->foreign('address_id')
+                ->references('id')
+                ->on('addresses');
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')
+                ->references('id')
+                ->on('categories');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('houses');
+    }
+}
