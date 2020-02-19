@@ -11,14 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'HousesController@index')->name('home');
+Route::resource('/houses', 'HousesController', [ 'except' => 'index']);
+Route::resource('/users',  'UsersController');

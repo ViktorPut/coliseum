@@ -17,11 +17,7 @@ class House extends Model
     ];
     //
     public  function address(){
-        return $this->hasOne(Address::class);
-    }
-
-    public function city(){//??
-        return $this->address->city;
+        return $this->belongsTo(Address::class);
     }
 
     public function category(){
