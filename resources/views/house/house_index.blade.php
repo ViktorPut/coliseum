@@ -84,6 +84,16 @@
              HOUSE INDEX
         </div>
         @csrf
+        {!! Form::open(['method' => 'GET', 'action' => 'HousesController@index']) !!}
+            <div class="form-group">
+                {!! Form::label('city', 'City: ', ['class' => 'from-control']) !!}
+                {!! Form::text('city', (request()->city ?: '' ), ['class' => 'from-control']) !!}
+            </div>
+            <div class="form-group">
+                {!! Form::submit('Find') !!}
+            </div>
+        {!! Form::close() !!}
+
         {!! Form::open(['method' => 'GET', 'action' => 'HousesController@create'])!!}
             {!! Form::submit('Добавить') !!}
         {!! Form::close() !!}

@@ -8,7 +8,10 @@ class Address extends Model
 {
     //
     protected $fillable = [
-        'number'
+        'number',
+        'city_id',
+        'street_id',
+        'district_id',
     ];
 
     public function street(){

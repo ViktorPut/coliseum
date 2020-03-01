@@ -4,10 +4,16 @@ namespace App\Http\Controllers;
 use App;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class HousesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('admin')->only('destroy');
+        $this->middleware('manager')->except(['index', 'show']);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -26,7 +32,9 @@ class HousesController extends Controller
      */
     public function create()
     {
-        return view('house/house_create');
+        $categories = App\Category::all();
+        $managers = App\User::getManagerList();
+        return view('house/house_create', compact('categories', 'managers'));
     }
 
     /**
@@ -38,6 +46,34 @@ class HousesController extends Controller
     public function store(Request $request)
     {
         //
+
+
+        $address = new App\Address([
+            'number'        => $request->number ?: '*',
+            'city_id'       => (App\City::firstOrCreate([ 'name' => $request->city]))->id,
+            'district_id'   => (App\District::firstOrCreate([ 'name' => $request->district]))->id,
+            'street_id'     => $street->id
+        ]);
+        $address->save();
+
+        $house = new App\House();
+
+        $house->fill([
+            'rooms'  => $request->rooms ?: '*',
+            'floors' => $request->floors ?: '*',
+            'cost'   => $request->cost,
+            'space'  => $request->space,
+            'description' => $request->description ?: '*',
+            'category_id' => $request->category,
+        ]);
+        $house->address_id = $address->id;
+        $house->save();
+
+//        if(Auth::user()->isAdmin()){
+//            $house->users()->attach($request->user);
+//        }else{
+//            $house->users()->attach(Auth::user()->id);
+//        }
 
         return redirect('/');
     }
