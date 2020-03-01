@@ -29,7 +29,7 @@
             {!! Form::label('description', 'Description: ') !!}
             {!! Form::textarea('description') !!} <br>
             {!! Form::label('category', 'Category: ') !!}
-            {!! Form::select('category', $categories->pluck('real_name'), $categories->pluck('id')) !!}<br>
+            {!! Form::select('category', $categories) !!}<br>
 {{--            @if(\Illuminate\Support\Facades\Auth::user()->isAdmin())--}}
                 {!! Form::label('manager', 'Manager: ') !!}
                 {!! Form::select('manager', $managers->pluck('name'), $managers->pluck('id')) !!}

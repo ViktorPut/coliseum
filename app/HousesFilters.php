@@ -20,6 +20,13 @@ class HousesFilters{
         return $this->builder;
     }
 
+    protected function city($value){
+        $this->builder->whereHas('address', function ($query) use ($value){
+            $query->whereHas('city', function ($query) use ($value){
+                $query->where('name', 'like', "%$value%");
+            });
+        });
+    }
     protected function filter(){
         return $this->request->all();
     }

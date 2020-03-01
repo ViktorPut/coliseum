@@ -19,9 +19,11 @@ class HousesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $houses = App\House::all();
+        $houses = App\House::with('address');
+        $houses = (new App\HousesFilters($houses, $request))->apply();
+        $houses = $houses->simplePaginate(2);
         return view('house/house_index', compact('houses'));
     }
 
@@ -32,7 +34,7 @@ class HousesController extends Controller
      */
     public function create()
     {
-        $categories = App\Category::all();
+        $categories = App\Category::pluck( 'real_name', 'id');
         $managers = App\User::getManagerList();
         return view('house/house_create', compact('categories', 'managers'));
     }
@@ -45,36 +47,7 @@ class HousesController extends Controller
      */
     public function store(Request $request)
     {
-        //
-
-
-        $address = new App\Address([
-            'number'        => $request->number ?: '*',
-            'city_id'       => (App\City::firstOrCreate([ 'name' => $request->city]))->id,
-            'district_id'   => (App\District::firstOrCreate([ 'name' => $request->district]))->id,
-            'street_id'     => $street->id
-        ]);
-        $address->save();
-
-        $house = new App\House();
-
-        $house->fill([
-            'rooms'  => $request->rooms ?: '*',
-            'floors' => $request->floors ?: '*',
-            'cost'   => $request->cost,
-            'space'  => $request->space,
-            'description' => $request->description ?: '*',
-            'category_id' => $request->category,
-        ]);
-        $house->address_id = $address->id;
-        $house->save();
-
-//        if(Auth::user()->isAdmin()){
-//            $house->users()->attach($request->user);
-//        }else{
-//            $house->users()->attach(Auth::user()->id);
-//        }
-
+        (new App\HouseService(null, $request))->createHouse();
         return redirect('/');
     }
 

@@ -121,6 +121,7 @@
                 </li>
             </ul>
         @endforeach
+        {{$houses->appends(request()->all())}}
     @endsection('content')
 
 </body>
