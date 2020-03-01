@@ -44,6 +44,12 @@ class HouseService{
             $house = new \App\House();
             $this->getHouse($house);
 
+            $this->attachUser($house);
+
+            $params = $this->getParameters();
+            if($params != null){
+                $house->parameters()->attach($params);
+            }
         }
 
         public function getHouse(\App\House $house){
@@ -58,11 +64,19 @@ class HouseService{
             $house->address_id = $this->createAddress();
             $house->save();
 
+            (new ImageService($this->request))->attach($house);
+        }
+
+        public function attachUser(\App\House $house){
             if(Auth::user()->isAdmin()){
                 $house->users()->attach($this->request->user);
             }else{
                 $house->users()->attach(Auth::user()->id);
             }
+        }
+
+        public function getParameters(){
+            if(!$this->request->has('parameters')) return null;
 
             $parameters = array();
             foreach (array_keys($this->request->parameters) as $fieldKey){
@@ -72,17 +86,23 @@ class HouseService{
                     $parameters[$key][$fieldKey] = $parameterRequest;
                 }
             }
-
             foreach ($parameters as $parameter){
                 $params[] = \App\Parameter::firstOrCreate([ 'name' => $parameter['name'] ?? 'Неизвестный параметр', 'value' => $parameter['value'] ])->id;
             }
-            $house->parameters()->attach($params);
-
-            (new ImageService($this->request))->attach($house);
+            return $params;
         }
 
         public function updateHouse(\App\House $house){
             $this->getHouse($house);
+            if(Auth::user()->isAdmin()) {
+                $this->attachUser($house);
+            }
+            $params = $this->getParameters();
+            if($params != null){
+                $house->parameters()->sync($params);
+            }else{
+                $house->parameters()->detach();
+            }
         }
     }
 ?>
