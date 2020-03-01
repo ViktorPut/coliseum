@@ -22,7 +22,7 @@ class HousesController extends Controller
     public function index(Request $request)
     {
         $houses = App\House::with('address');
-        $houses = (new App\HousesFilters($houses, $request))->apply();
+        $houses = (new App\ServicesAndHelpers\HousesFilters($houses, $request))->apply();
         $houses = $houses->simplePaginate(2);
         return view('house/house_index', compact('houses'));
     }
@@ -47,7 +47,7 @@ class HousesController extends Controller
      */
     public function store(Request $request)
     {
-        (new App\HouseService(null, $request))->createHouse();
+        (new App\ServicesAndHelpers\HouseService( $request))->createHouse();
         return redirect('/');
     }
 
@@ -70,7 +70,9 @@ class HousesController extends Controller
      */
     public function edit(App\House $house)
     {
-        return view('house/house_edit', compact('house'));
+        $categories = App\Category::pluck( 'real_name', 'id');
+        $managers = App\User::getManagerList();
+        return view('house/house_edit', compact('house', 'categories', 'managers'));
     }
 
     /**
@@ -80,11 +82,11 @@ class HousesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, App\House $housed)
+    public function update(Request $request, App\House $house)
     {
         //
-
-        return redirect('/');
+        (new App\ServicesAndHelpers\HouseService($request))->updateHouse($house);
+        return back();
     }
 
     /**
@@ -99,6 +101,6 @@ class HousesController extends Controller
         Storage::deleteDirectory('public/photos/house_photos/'.$house->id);
 
         $house->delete();
-        return redirect('/');
+        return back();
     }
 }

@@ -58,4 +58,8 @@ class User extends Authenticatable
         $managers = User::where('role_id', Role::MANAGER)->get();
         return $managers;
     }
+
+    public function houses(){
+        return $this->belongsToMany(House::class);
+    }
 }

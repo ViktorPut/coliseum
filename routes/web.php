@@ -17,3 +17,7 @@ Auth::routes();
 Route::get('/', 'HousesController@index')->name('home');
 Route::resource('/houses', 'HousesController', [ 'except' => 'index']);
 Route::resource('/users',  'UsersController');
+
+Route::get('/photos/{photo}/destroy', 'PhotosController@destroy');
+
+//Route::post('photos/{house}/create', 'PhotosController@create');

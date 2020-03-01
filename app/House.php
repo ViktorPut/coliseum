@@ -28,4 +28,15 @@ class House extends Model
         return $this->hasMany(Photo::class);
     }
 
+    public function parameters(){
+        return $this->belongsToMany(Parameter::class);
+    }
+
+    public function labels(){
+        return $this->belongsToMany(Label::class);
+    }
+
+    public function users(){
+        return $this->belongsToMany(User::class);
+    }
 }
